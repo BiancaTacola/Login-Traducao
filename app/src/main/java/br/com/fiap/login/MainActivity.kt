@@ -60,6 +60,12 @@ fun Login() {
     var password by remember {
         mutableStateOf("")
     }
+    
+    var emailError by remember {
+        mutableStateOf(false)
+    }
+
+    var tamanhoSenha = 8
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
@@ -77,22 +83,31 @@ fun Login() {
                 .padding(32.dp)) {
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { email = it
+                                    if (email.length > 0) emailError = false},
                     modifier = Modifier.fillMaxWidth(),
                     label = {
-                        Text(text = "Digite o seu e-mail")
+                        Text(text = stringResource(id = R.string.email))
                     },
+                    isError = emailError,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email
                     ),
-                )
+                    )
+                    if (emailError){
+                        Text(text = "E-mail é obrigatório",
+                            modifier = Modifier.fillMaxWidth(),
+                            color = Color.Red,
+                            textAlign = TextAlign.End)
+                    }
+
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { if (it.length <= tamanhoSenha) password = it },
                     modifier = Modifier.fillMaxWidth(),
                     label = {
-                        Text(text = "Digite a sua senha")
+                        Text(text = stringResource(id = R.string.password))
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password
@@ -100,9 +115,11 @@ fun Login() {
                     visualTransformation = PasswordVisualTransformation()
                 )
                 Spacer(modifier = Modifier.height(32.dp))
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = { if (email.isEmpty()){
+                    emailError = true
+                } }) {
                     Text(
-                        text = "ENTRAR",
+                        text = stringResource(id = R.string.enter),
                         modifier = Modifier
                             .padding(8.dp)
                             .fillMaxWidth(),
